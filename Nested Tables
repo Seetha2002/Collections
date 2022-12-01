@@ -1,0 +1,89 @@
+Nested tables are single-dimensional, unbounded collections of homogeneous elements.
+
+First, a nested table is single-dimensional, meaning that each row has a single column of data like a one-dimension array.
+Second, a nested table is unbounded. It means that the number of elements of a nested table is predetermined.
+Third, homogeneous elements mean that all elements of a nested table have the same data type.
+
+Declaring a nested table variable
+Declaring a nested table is a two-step process.
+First, declare the nested table type using this syntax:
+
+TYPE nested_table_type 
+    IS TABLE OF element_datatype [NOT NULL];
+Then, declare the nested table variable based on a nested table type:
+nested_table_variable nested_table_type;
+
+It is possible to create a nested table type located in the database:
+CREATE [OR REPLACE] TYPE nested_table_type
+    IS TABLE OF element_datatype [NOT NULL];
+    
+If you want to drop a type, use the following DROP TYPE statement:
+DROP TYPE type_name [FORCE];        
+
+Initializing a nested table
+When you declare a nested table variable, it is initialized to NULL.
+To initialize a nested table, you can use a constructor function. The constructor function has the same name as the type:
+nested_table_variable := nested_table_type();
+
+You can also declare a nested table and initialize it in one step using the following syntax:
+nested_table_variable nested_table_type := nested_table_type();
+
+Add elements to a nested table:
+To add an element to a nested table, you first use the EXTEND method:
+
+nested_table_variable.EXTEND;
+Then, use the assignment operator (:=) to add an element to the nested table:
+nested_table_variable := element;
+
+If you want to add multiple elements, you use the EXTEND(n) method, where n is the number of elements that you want to add:
+nested_table_variable.EXTEND(n);
+
+nested_table_variable := element_1;
+nested_table_variable := element_2;
+..
+nested_table_variable := element_n;
+
+Accessing elements by their indexes:
+To access an element at a specified index, you use the following syntax:
+
+nested_table_variable(index);
+Iterate over the elements of a nested table
+Nested tables have the FIRST and LAST methods that return the first and last indexes of elements respectively.
+
+Therefore, you can use these methods to iterate over the elements of a nested table using a FOR loop:
+
+FOR l_index IN nested_table_variable.FIRST..nested_table_variable.LAST
+LOOP
+    -- access element
+
+END LOOP;
+
+Example:
+DECLARE
+    -- declare a cursor that return customer name
+    CURSOR c_customer IS 
+        SELECT name 
+        FROM customers
+        ORDER BY name 
+        FETCH FIRST 10 ROWS ONLY;
+    -- declare a nested table type   
+    TYPE t_customer_name_type 
+        IS TABLE OF customers.name%TYPE;
+    
+    -- declare and initialize a nested table variable
+    t_customer_names t_customer_name_type := t_customer_name_type(); 
+    
+BEGIN
+    -- populate customer names from a cursor
+    FOR r_customer IN c_customer 
+    LOOP
+        t_customer_names.EXTEND;
+        t_customer_names(t_customer_names.LAST) := r_customer.name;
+    END LOOP;
+    
+    -- display customer names
+    FOR l_index IN t_customer_names.FIRST..t_customer_names.LAST 
+    LOOP
+        dbms_output.put_line(t_customer_names(l_index));
+    END LOOP;
+END;
