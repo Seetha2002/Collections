@@ -1,0 +1,69 @@
+Associative arrays are single-dimensional, unbounded, sparse collections of homogeneous elements.
+
+First, an associative array is single-dimensional. It means that an associative array has a single column of data in each row, which is similar to a one-dimension array.
+
+Second, an associative array is unbounded, meaning that it has a predetermined limits number of elements.
+
+Third, an associative array is sparse because its elements are not sequential. In other words, an associative array may have gaps between elements.
+
+Finally, an associative array has elements which have the same data type, or we call them homogenous elements.
+
+An associative array can be indexed by numbers or characters.
+
+Declaring an associative array is a two-step process. First, you declare an associative array type. And then, you declare an associative array variable of that type.
+
+Declaring an associative array type
+The following shows the syntax for declaring an associative array type:
+
+TYPE associative_array_type 
+    IS TABLE OF datatype [NOT NULL]
+    INDEX BY index_type;
+    
+In this syntax:
+The associative_array_type is the name of the associative array type.
+The datatype is the data type of the elements in the array.
+The index_type is the data type of the index used to organize the elements in the array.
+Optionally, you can specify NOT NULL to force every element in the array must have a value.
+
+The following example declares an associative array of characters indexed by characters:
+TYPE t_capital_type 
+    IS TABLE OF VARCHAR2(100) 
+    INDEX BY VARCHAR2(50);
+    
+Declaring an associative array variable:
+After having the associative array type, you need to declare an associative array variable of that type by using this syntax:
+associative_array associative_array_type 
+
+For example, this statement declares an associative array t_capital with the type t_capital_type:
+
+t_capital t_capital_type;
+Accessing associative array elements
+
+To access an array element, you use this syntax:
+array_name(index)
+
+Assigning associative array elements:
+To assign a value to an associative array element, you use the assignment operation (:=):
+array_name(index) := value;
+
+Oracle PL/SQL associative array example:
+The following anonymous block shows how to declare an associative array and assigns values to its elements:
+
+DECLARE
+    -- declare an associative array type
+    TYPE t_capital_type 
+        IS TABLE OF VARCHAR2(100) 
+        INDEX BY VARCHAR2(50);
+    -- declare a variable of the t_capital_type
+    t_capital t_capital_type;
+BEGIN
+    
+    t_capital('USA')            := 'Washington, D.C.';
+    t_capital('United Kingdom') := 'London';
+    t_capital('Japan')          := 'Tokyo';
+    
+END;
+/
+
+
+
